@@ -1,6 +1,15 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
   "buildCommand": "bun run build",
-  "outputDirectory": "dist",
   "installCommand": "bun install",
-  "framework": "nextjs"
+  "outputDirectory": "dist"
 }
