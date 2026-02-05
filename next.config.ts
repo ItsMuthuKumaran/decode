@@ -1,26 +1,21 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  output: 'export',
-  distDir: 'dist',
-  assetPrefix: '.',
+  // Remove: output: 'export'
+  // Remove: distDir: 'dist'
+  // Remove: assetPrefix: '.'
   
   images: {
-    unoptimized: true,
+    unoptimized: false, // Enable Vercel Image Optimization
   },
 
-  // Remove invalid experimental keys
   experimental: {
-    // ppr removed - not needed for static export
-    // dynamicIO removed - invalid in Next.js 16
+    reactCompiler: true,
+    viewTransition: true, // Enable View Transitions API
+    dynamicIO: true, // Enable dynamic IO
   },
 
-  // Remove eslint config - no longer supported
-  typescript: {
-    ignoreBuildErrors: false,
-  },
-
-  // Ensure trailing slashes for static hosting
+  compress: true,
   trailingSlash: true,
 }
 

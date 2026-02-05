@@ -1,21 +1,19 @@
 import Hero from '@/components/sections/Hero'
-import Stats from '@/components/sections/Stats'
-import Features from '@/components/sections/Features'
+import Problem from '@/components/sections/Problem'
+import WhatYouGet from '@/components/sections/WhatYouGet'
 import Testimonials from '@/components/sections/Testimonials'
-import Pricing from '@/components/sections/Pricing'
+import RiskReversal from '@/components/sections/RiskReversal'
 import FAQ from '@/components/sections/FAQ'
-import Footer from '@/components/sections/Footer'
 
 export default function Home() {
   return (
     <main>
       <Hero />
-      <Stats />
-      <Features />
+      <Problem />
+      <WhatYouGet />
       <Testimonials />
-      <Pricing />
+      <RiskReversal />
       <FAQ />
-      <Footer />
     </main>
   )
 }

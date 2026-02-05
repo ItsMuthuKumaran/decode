@@ -1,134 +1,124 @@
 'use client'
 
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion'
-import { useRef, useEffect } from 'react'
-import { ArrowRight, Play, Shield, Download, Users } from 'lucide-react'
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion'
+import { useRef, useCallback } from 'react'
+import { ArrowRight, Play, Globe, TrendingUp, Users } from 'lucide-react'
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end start']
   })
   
+  const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 }
+  const mouseX = useSpring(0, springConfig)
+  const mouseY = useSpring(0, springConfig)
+  
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
   
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-  
-  const springConfig = { stiffness: 100, damping: 30 }
-  const backgroundX = useSpring(mouseX, springConfig)
-  const backgroundY = useSpring(mouseY, springConfig)
-  
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e
-      const { innerWidth, innerHeight } = window
-      mouseX.set((clientX - innerWidth / 2) / 50)
-      mouseY.set((clientY - innerHeight / 2) / 50)
-    }
-    
-    window.addEventListener('mousemove', handleMouseMove, { passive: true })
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [mouseX, mouseY])
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (prefersReducedMotion) return
+    const { clientX, clientY, innerWidth, innerHeight } = window
+    mouseX.set((clientX - innerWidth / 2) / 50)
+    mouseY.set((clientY - innerHeight / 2) / 50)
+  }, [mouseX, mouseY, prefersReducedMotion])
   
   return (
-    <section 
-      ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white"
-    >
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-b from-slate-50 to-white"
-        style={{ y, opacity }}
-      />
+    <section ref={containerRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-50">
+      <motion.div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50" style={{ y, opacity }} />
       
       <motion.div 
-        className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-orange-200/30 rounded-full blur-[100px]"
-        style={{ x: backgroundX, y: backgroundY }}
+        className="absolute top-20 left-1/4 w-[600px] h-[600px] bg-blue-100/30 rounded-full blur-[120px]"
+        style={{ x: prefersReducedMotion ? 0 : mouseX, y: prefersReducedMotion ? 0 : mouseY }}
       />
       
-      <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="mb-6"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-medium">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            Trusted by 500+ Indian Professionals
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
+            <Globe className="w-4 h-4" />
+            For Indian professionals working with global clients
           </span>
         </motion.div>
         
         <motion.h1 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-5xl sm:text-6xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight"
+          transition={{ delay: 0.1 }}
+          className="text-5xl sm:text-6xl md:text-7xl font-bold text-slate-900 mb-6 leading-[1.1]"
         >
-          Stop Losing Clients to{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
-            "Kindly Revert"
+          Your expertise deserves{' '}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            better clients
           </span>
         </motion.h1>
         
         <motion.p 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-xl text-slate-600 max-w-3xl mx-auto mb-10"
+          transition={{ delay: 0.2 }}
+          className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto mb-6 leading-relaxed"
         >
-          10 research-backed communication protocols preventing{' '}
-          <span className="font-semibold">₹20,000-50,000</span> monthly losses.
+          The communication patterns that help Indian freelancers and agencies win premium international contracts—and charge what they're worth.
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="text-lg text-slate-500 max-w-2xl mx-auto mb-10"
+        >
+          No grammar lessons. No shame. Just frameworks that close deals.
         </motion.p>
         
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+          transition={{ delay: 0.3 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
         >
           <a
-            href="https://rzp.io/l/decoder  "
+            href="https://rzp.io/l/decoder"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-slate-900 rounded-full hover:bg-slate-800 transition-colors"
+            className="group inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-slate-900 rounded-full hover:bg-slate-800 transition-all hover:scale-105"
           >
-            Get The Decoder — ₹199
-            <ArrowRight className="w-5 h-5 ml-2" />
+            Get the frameworks — ₹199
+            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
           </a>
           
           <a
-            href="#protocols"
-            className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-slate-700 bg-white border-2 border-slate-200 rounded-full hover:border-slate-300 transition-colors"
+            href="#what-you-get"
+            className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-slate-700 bg-white border-2 border-slate-200 rounded-full hover:border-slate-300 transition-all"
           >
             <Play className="w-5 h-5 mr-2" />
-            View Protocols
+            See what's inside
           </a>
         </motion.div>
         
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-wrap justify-center gap-8 text-slate-600"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="grid grid-cols-3 gap-8 max-w-2xl mx-auto text-center"
         >
-          <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-green-500" />
-            <span className="text-sm font-medium">Instant Download</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Download className="w-5 h-5 text-green-500" />
-            <span className="text-sm font-medium">PDF + Notion</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-green-500" />
-            <span className="text-sm font-medium">500+ Users</span>
-          </div>
+          {[
+            { icon: TrendingUp, label: 'Higher conversion rates', value: '2-3x' },
+            { icon: Users, label: 'Professional network', value: '500+' },
+            { icon: Globe, label: 'Countries served', value: '12+' },
+          ].map((stat, i) => (
+            <div key={i} className="p-4">
+              <div className="text-2xl font-bold text-slate-900 mb-1">{stat.value}</div>
+              <div className="text-sm text-slate-500">{stat.label}</div>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>
